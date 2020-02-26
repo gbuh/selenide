@@ -46,7 +46,7 @@
         <methods>
           <!--<include name=".*Gangnamstyle.*"/>-->
           <!--<include name=".*_NDYoutubeChanelOnTop"/>-->
-          <!--<include name="testGoogleSearch_CanTouchThis.*"/>-->
+          <include name="testFindFirstResult"/>
         </methods>
       </class>
     </classes>
@@ -60,7 +60,7 @@
         <methods>
           <!--<include name=".*Gangnamstyle.*"/>-->
           <!--<include name=".*_NDYoutubeChanelOnTop"/>-->
-          <!--<include name="testGoogleSearch_CanTouchThis.*"/>-->
+          <include name="testFindFirstResult"/>
         </methods>
       </class>
     </classes>

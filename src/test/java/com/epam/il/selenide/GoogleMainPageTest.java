@@ -9,6 +9,7 @@ import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
 import java.lang.reflect.Method;
+import java.util.Map;
 
 import static com.codeborne.selenide.Selenide.open;
 
@@ -51,5 +52,18 @@ public class GoogleMainPageTest extends BaseTest {
         mainPage.setText("can't touch this");
         Assert.assertTrue((mainPage.getFirstSearchResult().toUpperCase().contains("MC HAMMER - U CAN'T TOUCH THIS")),
                 "MC Hammer - U Can't Touch This - YouTube is on the first search position");
+    }
+
+    @Test(dataProvider = "csvdataset", dataProviderClass = CsvDataProvider.class)
+    public void testFindFirstResult(Map<String, String> testData) {
+        long id = Thread.currentThread().getId();
+        System.out.println("Before test-method. Thread id is: " + id);
+        String shouldBe = " - YouTube should be on the first search position";
+        String number = testData.get("number");
+        String question = testData.get("findWord");
+        String answer = testData.get("expectedPhrase");
+        GoogleMainPage mainPage = new GoogleMainPage();
+        mainPage.setText(question);
+        Assert.assertTrue((mainPage.getFirstSearchResult().toUpperCase().contains(answer)), answer + shouldBe);
     }
 }
