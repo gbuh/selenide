@@ -8,8 +8,8 @@ public enum Browsers {
     DOCKERC("selenoid_chrome"),
     DOCKERF("selenoid_firefox");
 
-    private Browsers(String name) {
-        this.name = name;
+    Browsers(final String browserName) {
+        this.name = browserName;
     }
 
     private String name;

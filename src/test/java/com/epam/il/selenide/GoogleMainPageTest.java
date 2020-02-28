@@ -59,7 +59,6 @@ public class GoogleMainPageTest extends BaseTest {
         long id = Thread.currentThread().getId();
         System.out.println("Before test-method. Thread id is: " + id);
         String shouldBe = " - YouTube should be on the first search position";
-//        String number = testData.get("number");
         String question = testData.get("findWord");
         String answer = testData.get("expectedPhrase");
         GoogleMainPage mainPage = new GoogleMainPage();
