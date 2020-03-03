@@ -2,7 +2,8 @@ package com.epam.il.selenide;
 
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvValidationException;
-import org.apache.log4j.Logger;
+import com.opencsv.validators.LineValidator;
+import com.opencsv.validators.LineValidatorAggregator;
 import org.testng.annotations.DataProvider;
 
 import java.io.File;
@@ -10,23 +11,34 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 public final class CsvDataProvider {
-    private static final Logger LOGGER = Logger.getLogger(CsvDataProvider.class);
-
     private CsvDataProvider() { }
 
     @DataProvider(name = "csvdataset")
-    public static Iterator<Object[]> provideData(final Method method) {
+    public static Iterator<Object[]> provideData(final Method method) throws IOException, CsvValidationException {
         List<Object[]> list = new ArrayList<>();
         String pathName = "src" + File.separator + "test" + File.separator + "resources" + File.separator + method
                 .getDeclaringClass().getSimpleName() + "_" + method.getName() + ".csv";
         File file = new File(pathName);
+        LineValidatorAggregator lineValidatorAggregator = new LineValidatorAggregator();
+        lineValidatorAggregator.addValidator(new LineValidator() {
+            @Override
+            public boolean isValid(String line) {
+                return true;
+            }
+
+            @Override
+            public void validate(String line) throws CsvValidationException {
+                if (line == null || "".equals(line)) {
+                    throw new CsvValidationException("Csv data file cannot be empty or null.");
+                }
+            }
+        });
         try (CSVReader reader = new CSVReader(new FileReader(file));) {
             String[] keys = reader.readNext();
             if (keys != null) {
@@ -38,11 +50,10 @@ public final class CsvDataProvider {
                     }
                     list.add(new Object[] {testData});
                 }
+                lineValidatorAggregator.validate(keys[0]);
+            } else if(lineValidatorAggregator.isValid(null)) {
+                lineValidatorAggregator.validate(null);
             }
-        } catch (CsvValidationException e) {
-            LOGGER.info("File " + pathName + " not found.\n" + Arrays.toString(e.getStackTrace()));
-        } catch (IOException e) {
-            LOGGER.info("Could not read " + pathName + " file.\n" + Arrays.toString(e.getStackTrace()));
         }
         return list.iterator();
     }

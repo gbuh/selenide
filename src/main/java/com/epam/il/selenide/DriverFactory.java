@@ -27,7 +27,7 @@ public final class DriverFactory {
         ITestContext testContext;
         int randomDigit = 0;
         try {
-            randomDigit = (SecureRandom.getInstanceStrong().nextInt());
+            randomDigit = SecureRandom.getInstanceStrong().nextInt();
         } catch (NoSuchAlgorithmException e) {
             LOGGER.info(Arrays.toString(e.getStackTrace()));
         }

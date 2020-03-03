@@ -6,7 +6,8 @@ public enum Browsers {
     REMOTEC("grid_chrome"),
     REMOTEF("grid_firefox"),
     DOCKERC("selenoid_chrome"),
-    DOCKERF("selenoid_firefox");
+    DOCKERF("selenoid_firefox"),
+    DEFAULT("default");
 
     Browsers(final String browserName) {
         this.name = browserName;
