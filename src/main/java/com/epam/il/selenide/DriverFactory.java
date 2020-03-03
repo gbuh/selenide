@@ -11,6 +11,9 @@ import java.util.Arrays;
 
 import static com.codeborne.selenide.Selenide.open;
 
+/**
+ * WebDriver initialisation factory.
+ */
 public final class DriverFactory {
     private static final Logger LOGGER = Logger.getLogger(DriverFactory.class);
     private static final String HUB_URL = "hub_url";
@@ -22,8 +25,12 @@ public final class DriverFactory {
     private DriverFactory() {
     }
 
+    /**
+     * WebDriver initialization.
+     *
+     * @param context test executuion context
+     */
     public static synchronized void setupDriverInstance(final ITestContext context) {
-        DesiredCapabilities capabilities;
         ITestContext testContext;
         int randomDigit = 0;
         try {
@@ -33,8 +40,8 @@ public final class DriverFactory {
         }
         testContext = context;
         if (context.getCurrentXmlTest().getAllParameters().containsKey("browser")) {
-            Browsers browser =
-                    Browsers.valueOf(context.getCurrentXmlTest().getAllParameters().get("browser").toUpperCase());
+            Browsers browser = Browsers.valueOf(
+                    context.getCurrentXmlTest().getAllParameters().get("browser").toUpperCase());
             switch (browser) {
                 case CHROME:
                     setupChromeDriver(context);
@@ -46,42 +53,30 @@ public final class DriverFactory {
                     LOGGER.info("Firefox browser was set up.");
                     break;
                 case DOCKERC:
-                    capabilities = new DesiredCapabilities();
-                    capabilities.setCapability("enableVNC", true);
-                    capabilities.setCapability("enableVideo", true);
-                    capabilities.setCapability("videoName", "Chrome-" + randomDigit + ".mp4");
-                    capabilities.setCapability("videoFrameRate", VIDEO_FRAME_RATE);
-                    capabilities.setCapability("videoScreenSize", "1920x1080");
-                    capabilities.setCapability("enableLog", true);
-                    capabilities.setCapability("logName", "Chrome-" + randomDigit + ".log");
-                    Configuration.browserCapabilities = capabilities;
-                    Configuration.remote = testContext.getCurrentXmlTest().getAllParameters().get(HUB_URL);
+                    desireCapabilities(randomDigit, "Chrome-");
+                    Configuration.remote = testContext.getCurrentXmlTest().getAllParameters()
+                                                      .get(HUB_URL);
                     setupChromeDriver(context);
                     LOGGER.info("'Selenoid' chrome 'GRID HUB' was set up.");
                     break;
                 case DOCKERF:
-                    capabilities = new DesiredCapabilities();
-                    capabilities.setCapability("enableVNC", true);
-                    capabilities.setCapability("enableVideo", true);
-                    capabilities.setCapability("videoName", "Firefox-" + randomDigit + ".mp4");
-                    capabilities.setCapability("videoFrameRate", VIDEO_FRAME_RATE);
-                    capabilities.setCapability("videoScreenSize", "1920x1080");
-                    capabilities.setCapability("enableLog", true);
-                    capabilities.setCapability("logName", "Firefox-" + randomDigit + ".log");
-                    Configuration.browserCapabilities = capabilities;
+                    desireCapabilities(randomDigit, "Firefox-");
                     Configuration.browser = FIREFOX;
-                    Configuration.remote = testContext.getCurrentXmlTest().getAllParameters().get(HUB_URL);
+                    Configuration.remote = testContext.getCurrentXmlTest().getAllParameters()
+                                                      .get(HUB_URL);
                     manageDriver(context);
                     LOGGER.info("'Selenoid' firefox 'GRID HUB' was set up.");
                     break;
                 case REMOTEC:
-                    Configuration.remote = testContext.getCurrentXmlTest().getAllParameters().get(HUB_URL);
+                    Configuration.remote = testContext.getCurrentXmlTest().getAllParameters()
+                                                      .get(HUB_URL);
                     setupChromeDriver(context);
                     LOGGER.info("Remote chrome in the Docker was created.");
                     break;
                 case REMOTEF:
                     Configuration.browser = FIREFOX;
-                    Configuration.remote = testContext.getCurrentXmlTest().getAllParameters().get(HUB_URL);
+                    Configuration.remote = testContext.getCurrentXmlTest().getAllParameters()
+                                                      .get(HUB_URL);
                     manageDriver(context);
                     LOGGER.info("Remote firefox in the Docker was created.");
                     break;
@@ -93,6 +88,19 @@ public final class DriverFactory {
             setupChromeDriver(context);
             LOGGER.info("Chrome browser was created by default.");
         }
+    }
+
+    private static void desireCapabilities(final int randomDigit, final String browserName) {
+        DesiredCapabilities capabilities;
+        capabilities = new DesiredCapabilities();
+        capabilities.setCapability("enableVNC", true);
+        capabilities.setCapability("enableVideo", true);
+        capabilities.setCapability("videoName", browserName + randomDigit + ".mp4");
+        capabilities.setCapability("videoFrameRate", VIDEO_FRAME_RATE);
+        capabilities.setCapability("videoScreenSize", "1920x1080");
+        capabilities.setCapability("enableLog", true);
+        capabilities.setCapability("logName", browserName + randomDigit + ".log");
+        Configuration.browserCapabilities = capabilities;
     }
 
     private static void setupChromeDriver(final ITestContext context) {

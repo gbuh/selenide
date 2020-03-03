@@ -16,24 +16,37 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Csv data reader implementation.
+ */
 public final class CsvDataProvider {
     private CsvDataProvider() { }
 
+    /**
+     * Creating an iterator for the csv data file.
+     *
+     * @param method the reflected method
+     * @return Iterator/<Object[]/>
+     * @throws IOException            if the file does not exist
+     * @throws CsvValidationException if the file format is not correct
+     */
     @DataProvider(name = "csvdataset")
-    public static Iterator<Object[]> provideData(final Method method) throws IOException, CsvValidationException {
+    public static Iterator<Object[]> provideData(final Method method)
+            throws IOException, CsvValidationException {
         List<Object[]> list = new ArrayList<>();
-        String pathName = "src" + File.separator + "test" + File.separator + "resources" + File.separator + method
-                .getDeclaringClass().getSimpleName() + "_" + method.getName() + ".csv";
+        String pathName = "src" + File.separator + "test" + File.separator + "resources"
+                + File.separator + method.getDeclaringClass().getSimpleName() + "_" + method
+                .getName() + ".csv";
         File file = new File(pathName);
         LineValidatorAggregator lineValidatorAggregator = new LineValidatorAggregator();
         lineValidatorAggregator.addValidator(new LineValidator() {
             @Override
-            public boolean isValid(String line) {
+            public boolean isValid(final String line) {
                 return true;
             }
 
             @Override
-            public void validate(String line) throws CsvValidationException {
+            public void validate(final String line) throws CsvValidationException {
                 if (line == null || "".equals(line)) {
                     throw new CsvValidationException("Csv data file cannot be empty or null.");
                 }
@@ -51,7 +64,7 @@ public final class CsvDataProvider {
                     list.add(new Object[] {testData});
                 }
                 lineValidatorAggregator.validate(keys[0]);
-            } else if(lineValidatorAggregator.isValid(null)) {
+            } else if (lineValidatorAggregator.isValid(null)) {
                 lineValidatorAggregator.validate(null);
             }
         }

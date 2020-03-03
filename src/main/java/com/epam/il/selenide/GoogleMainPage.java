@@ -4,6 +4,9 @@ import org.openqa.selenium.By;
 
 import static com.codeborne.selenide.Selenide.$;
 
+/**
+ * Google search home page view.
+ */
 public class GoogleMainPage {
     private static final String RESULT = "h3.LC20lb";
     private static final String SET_TEXT = "q";
